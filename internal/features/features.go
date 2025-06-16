@@ -1,7 +1,7 @@
 package features
 
 import (
-	"github.com/MadeSimplest/core/models"
+	"github.com/madeinly/core/models"
 )
 
 var Available models.Features

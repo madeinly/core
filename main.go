@@ -3,10 +3,10 @@ package core
 import (
 	"database/sql"
 
-	"github.com/MadeSimplest/core/internal/cmd"
-	"github.com/MadeSimplest/core/internal/db"
-	"github.com/MadeSimplest/core/internal/features"
-	"github.com/MadeSimplest/core/models"
+	"github.com/madeinly/core/internal/cmd"
+	"github.com/madeinly/core/internal/db"
+	"github.com/madeinly/core/internal/features"
+	"github.com/madeinly/core/models"
 )
 
 func Start(featuresAvailable models.Features) {

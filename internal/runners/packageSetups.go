@@ -3,7 +3,7 @@ package runners
 import (
 	"fmt"
 
-	"github.com/MadeSimplest/core/models"
+	"github.com/madeinly/core/models"
 )
 
 type SetupFunc func() error

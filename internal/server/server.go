@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/MadeSimplest/core/internal/features"
+	"github.com/madeinly/core/internal/features"
 )
 
 func SetupRoutes(mux *http.ServeMux) {

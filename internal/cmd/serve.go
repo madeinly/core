@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/MadeSimplest/core/internal/server"
+	"github.com/madeinly/core/internal/server"
 	"github.com/spf13/cobra"
 )
 

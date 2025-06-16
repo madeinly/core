@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/MadeSimplest/core/internal/features"
-	"github.com/MadeSimplest/core/internal/runners"
+	"github.com/madeinly/core/internal/features"
+	"github.com/madeinly/core/internal/runners"
 	"github.com/spf13/cobra"
 )
 

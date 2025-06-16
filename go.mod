@@ -1,4 +1,4 @@
-module github.com/MadeSimplest/core
+module github.com/madeinly/core
 
 go 1.24.1
 

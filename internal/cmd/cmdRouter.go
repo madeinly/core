@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/MadeSimplest/core/internal/features"
+	"github.com/madeinly/core/internal/features"
 )
 
 func CmdRouter() {

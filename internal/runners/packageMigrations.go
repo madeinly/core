@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/MadeSimplest/core/internal/db"
-	"github.com/MadeSimplest/core/models"
+	"github.com/madeinly/core/internal/db"
+	"github.com/madeinly/core/models"
 )
 
 // RunAll executes all registered migrations
