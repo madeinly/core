@@ -8,7 +8,7 @@ import (
 
 type SetupFunc func() error
 
-type setupFeature struct {
+type SetupFeature struct {
 	Name string
 	Fn   SetupFunc
 }

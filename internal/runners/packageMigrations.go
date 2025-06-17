@@ -11,13 +11,9 @@ import (
 // RunAll executes all registered migrations
 func RunMigrations(features models.Features) error {
 
-	db := db.GetDB()
+	dbConn := db.GetDB()
 
-	_, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS _migrations (
-			name TEXT PRIMARY KEY,
-			executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-		)`)
+	_, err := dbConn.Exec(db.InitialSchema)
 	if err != nil {
 		return fmt.Errorf("failed to create migrations table: %w", err)
 	}
@@ -26,7 +22,7 @@ func RunMigrations(features models.Features) error {
 	for _, feature := range features {
 		// Check if already executed
 		var exists bool
-		err := db.QueryRow(`
+		err := dbConn.QueryRow(`
 			SELECT EXISTS(SELECT 1 FROM _migrations WHERE name = ?)`,
 			feature.Migration.Name).Scan(&exists)
 		if err != nil {
@@ -39,13 +35,13 @@ func RunMigrations(features models.Features) error {
 		}
 
 		// Execute migration
-		_, err = db.Exec(feature.Migration.Schema)
+		_, err = dbConn.Exec(feature.Migration.Schema)
 		if err != nil {
 			return fmt.Errorf("failed to execute migration %s: %w", feature.Migration.Name, err)
 		}
 
 		// Record migration
-		_, err = db.Exec(`
+		_, err = dbConn.Exec(`
 			INSERT INTO _migrations (name) VALUES (?)`,
 			feature.Migration.Name)
 		if err != nil {

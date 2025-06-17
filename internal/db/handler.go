@@ -1,6 +1,8 @@
 package db
 
 import (
+	_ "embed" // Required for //go:embed
+
 	"database/sql"
 	"fmt"
 	"os"
@@ -18,6 +20,9 @@ type Migration struct {
 	Name   string
 	Schema string
 }
+
+//go:embed queries/initial_schema.sql
+var InitialSchema string
 
 /*
 go run wont work as go will create the binary at /tmp/gobuild**** and dispose the folder so the db
