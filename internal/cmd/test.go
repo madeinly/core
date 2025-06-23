@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/madeinly/core/internal/settings"
 	"github.com/spf13/cobra"
 )
 
@@ -42,6 +41,6 @@ The command is idempotent - it can be safely run multiple times as it will
 only make changes when necessary.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("this is a test command from core")
+		settings.InitSettings()
 	},
 }

@@ -15,7 +15,7 @@ import (
 )
 
 func Logging(next http.Handler) http.Handler {
-	const devMode = false
+	const devMode = true
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -104,7 +104,7 @@ func Logging(next http.Handler) http.Handler {
 			fmt.Printf("%s\n\n", red("───────────────────────────────────────────────────────────────"))
 		} else {
 
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(originalWriter, r)
 		}
 
 		logger.AccessLog(r, responseRecorder.Code, int64(responseRecorder.Body.Len()))

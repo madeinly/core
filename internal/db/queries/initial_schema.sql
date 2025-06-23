@@ -27,4 +27,4 @@ CREATE TABLE IF NOT EXISTS migrations (
 );
 
 -- Fourth statement: Insert core migration
-INSERT INTO migrations (package) VALUES ('core');
+INSERT OR IGNORE INTO migrations (package) VALUES ('core');

@@ -23,7 +23,7 @@ func RunMigrations(features models.Features) error {
 		// Check if already executed
 		var exists bool
 		err := dbConn.QueryRow(`
-			SELECT EXISTS(SELECT 1 FROM _migrations WHERE name = ?)`,
+			SELECT EXISTS(SELECT 1 FROM migrations WHERE package = ?)`,
 			feature.Migration.Name).Scan(&exists)
 		if err != nil {
 			return fmt.Errorf("failed to check migration status: %w", err)
@@ -42,7 +42,7 @@ func RunMigrations(features models.Features) error {
 
 		// Record migration
 		_, err = dbConn.Exec(`
-			INSERT INTO _migrations (name) VALUES (?)`,
+			INSERT INTO migrations (package) VALUES (?)`,
 			feature.Migration.Name)
 		if err != nil {
 			return fmt.Errorf("failed to record migration %s: %w", feature.Migration.Name, err)
