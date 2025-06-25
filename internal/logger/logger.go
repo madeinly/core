@@ -1,12 +1,18 @@
 package logger
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 func AccessLog(r *http.Request, status int, responseSize int64) {
@@ -57,4 +63,83 @@ func AccessLog(r *http.Request, status int, responseSize int64) {
 	if _, err := accessLog.WriteString(logMessage); err != nil {
 		log.Printf("ERROR: Failed to write to log file '%s': %v\n", fileName, err)
 	}
+}
+
+func DebugLog(req *http.Request, res *httptest.ResponseRecorder) {
+
+	var (
+		green   = color.New(color.FgGreen).SprintFunc()
+		red     = color.New(color.FgRed).SprintFunc()
+		cyan    = color.New(color.FgCyan).SprintFunc()
+		yellow  = color.New(color.FgYellow).SprintFunc()
+		blue    = color.New(color.FgBlue).SprintFunc()
+		magenta = color.New(color.FgMagenta).SprintFunc()
+		gray    = color.New(color.FgHiBlack).SprintFunc()
+	)
+
+	start := time.Now()
+
+	// get Body
+	var requestBody string
+	bodyBytes, err := io.ReadAll(res.Body)
+	if err == nil {
+		requestBody = string(bodyBytes)
+		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	}
+
+	// start template
+	fmt.Printf("%s\n", green("───────────────────────────────────────────────────────────────"))
+
+	fmt.Printf(
+		"%s - - [%s] \"%s %s %s\" %s %s\n%s %v\n%s %v",
+		gray(req.RemoteAddr),
+		cyan(time.Now().Format("02/Jan/2006:15:04:05 -0700")),
+		green(req.Method),
+		yellow(req.URL.Path),
+		magenta(req.Proto),
+		blue(req.ContentLength),
+		cyan(time.Since(start)),
+		gray("Params:"), req.URL.Query(),
+		gray("Headers:"), req.Header,
+	)
+
+	if requestBody != "" {
+		fmt.Printf("\n%s\n%s", gray("Request Body:"), formatJSON(requestBody))
+	}
+
+	if res != nil {
+		fmt.Printf("\n\n%s", gray("Response: "))
+		statusStr := fmt.Sprintf("\nStatus: %d", res.Code)
+		if res.Code >= 400 {
+			log.Print(red(statusStr))
+		} else {
+			log.Print(green(statusStr))
+		}
+		fmt.Println(gray("Headers:"))
+		fmt.Printf("%v\n", res.Header())
+
+		responseBody := res.Body.String()
+		if responseBody != "" {
+			fmt.Println(gray("Body:"))
+			fmt.Printf("%s\n", formatJSON(responseBody))
+		}
+
+	}
+
+	fmt.Printf("%s\n\n", red("───────────────────────────────────────────────────────────────"))
+
+	AccessLog(req, res.Code, int64(res.Body.Len()))
+
+}
+
+func formatJSON(input string) string {
+	var raw interface{}
+	if err := json.Unmarshal([]byte(input), &raw); err != nil {
+		return input
+	}
+	pretty, err := json.MarshalIndent(raw, "", "  ")
+	if err != nil {
+		return input
+	}
+	return string(pretty)
 }

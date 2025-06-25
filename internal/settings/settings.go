@@ -4,21 +4,34 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/BurntSushi/toml"
 )
 
-type EmailCredentials struct {
-	Password string
-	User     string
-	Port     string
-	Imap     string
-	Smtp     string
+// type EmailCredentials struct {
+// 	Password string
+// 	User     string
+// 	Port     string
+// 	Imap     string
+// 	Smtp     string
+// }
+
+// type MadeinlySetting struct {
+// 	Version          string
+// 	Debug            bool
+// 	EmailCredentials EmailCredentials
+// }
+
+// type Cors struct {
+// 	FrontDomain string
+// }
+
+type SettingsModel struct {
+	Version float64
+	Debug   bool
 }
 
-type MadeinlySetting struct {
-	Version          string
-	Debug            bool
-	EmailCredentials EmailCredentials
-}
+var Settings SettingsModel
 
 func InitSettings() {
 	binPath, err := os.Executable()
@@ -28,16 +41,16 @@ func InitSettings() {
 		return
 	}
 
-	settingsPath := filepath.Join(binPath, "settings.toml")
+	settingsPath := filepath.Join(filepath.Dir(binPath), "settings.toml")
 
-	settingsFile, err := os.ReadFile(settingsPath)
+	settingsByte, err := os.ReadFile(settingsPath)
 
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	fmt.Println(string(settingsFile))
+	toml.Decode(string(settingsByte), &Settings)
 
 }
 

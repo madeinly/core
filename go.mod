@@ -3,6 +3,7 @@ module github.com/madeinly/core
 go 1.24.1
 
 require (
+	github.com/BurntSushi/toml v1.5.0
 	github.com/fatih/color v1.18.0
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/spf13/cobra v1.9.1
