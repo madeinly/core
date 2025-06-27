@@ -17,7 +17,8 @@ Examples:
   serve --port 3000 # starts server on port 3000`,
 	Run: func(cmd *cobra.Command, args []string) {
 		port, _ := cmd.Flags().GetString("port")
-		settings.InitSettings()
+		settings.SetSettings()
+		go settings.WatchSettings()
 
 		server.Start(port)
 	},

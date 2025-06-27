@@ -10,15 +10,13 @@ import (
 	"github.com/madeinly/core/internal/settings"
 )
 
-var debugMode bool = settings.Settings.Debug
-
 func Logging(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		AppSettings := settings.GetSettings()
+		debugMode := AppSettings.Debug
 
 		enableCORS(w, r)
-
-		fmt.Println("debug mode", debugMode)
 
 		if debugMode {
 			recorder := httptest.NewRecorder()
@@ -39,21 +37,38 @@ func Logging(next http.Handler) http.Handler {
 }
 
 func enableCORS(w http.ResponseWriter, r *http.Request) {
-	// Get the requesting origin
+
+	frontDomain := settings.GetSettings().FrontDomain
 	origin := r.Header.Get("Origin")
 
-	// Allow local development ports
-	if strings.HasPrefix(origin, "http://localhost:") ||
-		strings.HasPrefix(origin, "http://192.168.11.") {
+	// 1. CORS Configuration
+	if strings.HasPrefix(origin, fmt.Sprintf("http://%s", frontDomain)) {
 		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
 	}
 
-	// For preflight requests
+	// 2. Preflight Handling
 	if r.Method == "OPTIONS" {
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		w.Header().Set("Access-Control-Max-Age", "3600") // 1 hour cache
+		w.Header().Set("Access-Control-Max-Age", "3600")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+
+	// 3. Cookie Configuration (Development Version)
+	cookie := &http.Cookie{
+		Name:     "session_token",
+		Value:    "testing",
+		Path:     "/",
+		Domain:   "", // Leave empty for local IP development
+		MaxAge:   86400,
+		Secure:   false, // Disable in development (no HTTPS)
+		HttpOnly: false, // Only for development (enable in production)
+		SameSite: http.SameSiteNoneMode,
+	}
+	http.SetCookie(w, cookie)
+
+	// 4. Important Security Header
+	w.Header().Set("Vary", "Origin") // Prevent cache poisoning
 }
