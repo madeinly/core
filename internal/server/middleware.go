@@ -1,10 +1,8 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 
 	"github.com/madeinly/core/internal/logger"
 	"github.com/madeinly/core/internal/settings"
@@ -38,11 +36,14 @@ func Logging(next http.Handler) http.Handler {
 
 func enableCORS(w http.ResponseWriter, r *http.Request) {
 
-	frontDomain := settings.GetSettings().FrontDomain
+	// frontDomain := settings.GetSettings().FrontDomain
 	origin := r.Header.Get("Origin")
 
+	// fmt.Println(frontDomain, origin)
+
 	// 1. CORS Configuration
-	if strings.HasPrefix(origin, fmt.Sprintf("http://%s", frontDomain)) {
+	// if strings.HasPrefix(origin, fmt.Sprintf("http://%s", frontDomain)) {
+	if true {
 		w.Header().Set("Access-Control-Allow-Origin", origin)
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 	}
@@ -51,24 +52,11 @@ func enableCORS(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "OPTIONS" {
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
 		w.Header().Set("Access-Control-Max-Age", "3600")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	// 3. Cookie Configuration (Development Version)
-	cookie := &http.Cookie{
-		Name:     "session_token",
-		Value:    "testing",
-		Path:     "/",
-		Domain:   "", // Leave empty for local IP development
-		MaxAge:   86400,
-		Secure:   false, // Disable in development (no HTTPS)
-		HttpOnly: false, // Only for development (enable in production)
-		SameSite: http.SameSiteNoneMode,
-	}
-	http.SetCookie(w, cookie)
-
-	// 4. Important Security Header
-	w.Header().Set("Vary", "Origin") // Prevent cache poisoning
+	w.Header().Set("Vary", "Origin")
 }

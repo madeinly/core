@@ -103,6 +103,8 @@ func DebugLog(req *http.Request, res *httptest.ResponseRecorder) {
 		gray("Headers:"), req.Header,
 	)
 
+	fmt.Println("Cookies:", req.Cookies()) // Explicitly log cookies
+
 	if requestBody != "" {
 		fmt.Printf("\n%s\n%s", gray("Request Body:"), formatJSON(requestBody))
 	}
