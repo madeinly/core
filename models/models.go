@@ -7,7 +7,7 @@ import (
 type Route struct {
 	Type    string
 	Pattern string
-	Handler http.Handler
+	Handler http.HandlerFunc
 }
 
 type Migration struct {
