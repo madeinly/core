@@ -10,28 +10,12 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-// type EmailCredentials struct {
-// 	Password string
-// 	User     string
-// 	Port     string
-// 	Imap     string
-// 	Smtp     string
-// }
-
-// type MadeinlySetting struct {
-// 	Version          string
-// 	Debug            bool
-// 	EmailCredentials EmailCredentials
-// }
-
-// type Cors struct {
-// 	FrontDomain string
-// }
-
 type AppSettings struct {
-	Version     string `toml:"Version"`
-	Debug       bool   `toml:"Debug"`
-	FrontDomain string `toml:"FrontDomain"`
+	Version     string `toml:"version"`
+	Debug       bool   `toml:"debug"`
+	FrontDomain string `toml:"frontDomain"`
+	Address     string `toml:"address"`
+	Port        string `toml:"port"`
 }
 
 var (

@@ -15,6 +15,10 @@ import (
 	"github.com/fatih/color"
 )
 
+func ErrorLog() {
+
+}
+
 func AccessLog(r *http.Request, status int, responseSize int64) {
 	// Get binary path and determine log directory
 	binaryPath, err := os.Executable()
@@ -81,6 +85,7 @@ func DebugLog(req *http.Request, res *httptest.ResponseRecorder) {
 
 	// get Body
 	var requestBody string
+
 	bodyBytes, err := io.ReadAll(res.Body)
 	if err == nil {
 		requestBody = string(bodyBytes)

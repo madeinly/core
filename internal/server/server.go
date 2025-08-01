@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -21,20 +20,16 @@ func SetupRoutes(mux *http.ServeMux) {
 
 }
 
-func Start(port string) {
-
-	if port == "" {
-		port = "8080"
-	}
+func Start(address string, port string) error {
 
 	router := http.NewServeMux()
 	SetupRoutes(router)
 
-	addr := ":" + port
-	fmt.Printf("Server running on http://localhost%s\n", addr)
+	fulladdress := address + ":" + port
 
-	if err := http.ListenAndServe(addr, Logging(router)); err != nil {
-		fmt.Printf("Server error: %v\n", err)
+	if err := http.ListenAndServe(fulladdress, Logging(router)); err != nil {
 		os.Exit(1)
 	}
+
+	return nil
 }
