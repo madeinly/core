@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"runtime"
 
 	"github.com/madeinly/core/email"
@@ -21,8 +20,10 @@ func OnErr(err error, msg string, args ...any) {
 
 	formattedMsg := fmt.Sprintf(msg, args...)
 
-	// 1. Log the fatal error to a file
-	logToFile(err, formattedMsg)
+	// 1. Log the fatal error using the standard logger
+	log.Printf("FATAL: %s", formattedMsg)
+	log.Printf("Error: %v", err)
+	log.Printf("goroutine %d\n", runtime.NumGoroutine())
 
 	// 2. Attempt to put the frontend into maintenance mode
 	mockAPIKey := "your-secret-api-key" // In a real scenario, this should come from a secure source
@@ -54,31 +55,5 @@ func OnErr(err error, msg string, args ...any) {
 
 	// 4. Exit the program
 	os.Exit(1)
+
 }
-
-// logToFile handles writing the fatal error to the log file.
-func logToFile(err error, formattedMsg string) {
-	exe, exeErr := os.Executable()
-	if exeErr != nil {
-		log.Printf("FATAL: Could not get executable path: %v", exeErr)
-		log.Printf("Original error: %s - %v", formattedMsg, err)
-		return
-	}
-	logDir := filepath.Join(filepath.Dir(exe), "logs")
-	_ = os.MkdirAll(logDir, 0o755)
-
-	logPath := filepath.Join(logDir, "error.log")
-	f, fileErr := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
-	if fileErr != nil {
-		log.Printf("FATAL: Could not open log file: %v", fileErr)
-		log.Printf("Original error: %s - %v", formattedMsg, err)
-		return
-	}
-	defer f.Close()
-
-	logger := log.New(f, "", log.LstdFlags)
-	logger.Printf("FATAL: %s", formattedMsg)
-	logger.Printf("Error: %v", err)
-	logger.Printf("goroutine %d\n", runtime.NumGoroutine())
-}
-

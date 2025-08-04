@@ -3,6 +3,7 @@ package internal
 import (
 	"crypto/tls"
 	"fmt"
+	"log"
 	"net/http"
 	"net/smtp"
 	"os"
@@ -12,36 +13,37 @@ import (
 )
 
 // RunChecks verifies all critical dependencies and permissions at startup.
-// It will panic if any check fails, preventing the application from starting
-// in a broken state.
+// It sends progress and results over the provided channel and will panic
+// if any check fails, preventing the application from starting in a broken state.
 func RunChecks(ch chan<- string) {
 	ch <- "Running pre-flight checks..."
 
-	if err := checkLogFile(); err != nil {
+	if err := checkLogFile(ch); err != nil {
 		ch <- fmt.Sprintf("Pre-flight check failed: %v", err)
-		panic(0)
+		panic(err)
 	}
 
-	if err := checkEmail(); err != nil {
+	if err := checkEmail(ch); err != nil {
 		ch <- fmt.Sprintf("Pre-flight check failed: %v", err)
-		panic(0)
+		panic(err)
 	}
 
-	if err := checkHTTP(); err != nil {
+	if err := checkHTTP(ch); err != nil {
 		ch <- fmt.Sprintf("Pre-flight check failed: %v", err)
-		panic(0)
+		panic(err)
 	}
 
-	if err := checkWorkspacePermissions(); err != nil {
+	if err := checkWorkspacePermissions(ch); err != nil {
 		ch <- fmt.Sprintf("Pre-flight check failed: %v", err)
-		panic(0)
+		panic(err)
 	}
 
 	ch <- "All pre-flight checks passed."
 }
 
-// checkLogFile ensures the log directory and file are writable.
-func checkLogFile() error {
+// checkLogFile ensures the log directory and file are writable and sets it for the standard logger.
+func checkLogFile(ch chan<- string) error {
+	ch <- "Checking log file permissions..."
 	exe, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("cannot locate executable: %w", err)
@@ -56,11 +58,15 @@ func checkLogFile() error {
 	if err != nil {
 		return fmt.Errorf("cannot open error.log for writing: %w", err)
 	}
-	return f.Close()
+
+	log.SetOutput(f)
+	ch <- "Log file check passed."
+	return nil
 }
 
 // checkEmail verifies the SMTP connection and credentials.
-func checkEmail() error {
+func checkEmail(ch chan<- string) error {
+	ch <- "Checking email settings and connection..."
 	appSettings := settings.GetSettings().Email
 	if appSettings.Address == "" || appSettings.Port == "" || appSettings.User == "" {
 		return fmt.Errorf("email settings are incomplete")
@@ -80,6 +86,7 @@ func checkEmail() error {
 			return err
 		}
 		defer client.Close()
+		ch <- "Email (ssl/tls) connection successful."
 		return client.Noop()
 	} else {
 		client, err := smtp.Dial(serverAddr)
@@ -96,22 +103,26 @@ func checkEmail() error {
 		if err = client.Auth(auth); err != nil {
 			return fmt.Errorf("email auth failed: %w", err)
 		}
+		ch <- "Email (starttls) connection successful."
 		return client.Noop()
 	}
 }
 
 // checkHTTP verifies that outbound HTTP requests can be made.
-func checkHTTP() error {
+func checkHTTP(ch chan<- string) error {
+	ch <- "Checking outbound HTTP connectivity..."
 	// We check against a known, reliable server.
 	_, err := http.Get("https://www.google.com/generate_204")
 	if err != nil {
 		return fmt.Errorf("outbound http check failed: %w", err)
 	}
+	ch <- "HTTP connectivity check passed."
 	return nil
 }
 
 // checkWorkspacePermissions verifies that the application has the correct permissions.
-func checkWorkspacePermissions() error {
+func checkWorkspacePermissions(ch chan<- string) error {
+	ch <- "Checking workspace permissions..."
 	exe, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("cannot locate executable: %w", err)
@@ -120,5 +131,6 @@ func checkWorkspacePermissions() error {
 	if err := os.WriteFile(filepath.Join(filepath.Dir(exe), ".perm_check"), []byte("test"), 0o644); err != nil {
 		return fmt.Errorf("workspace permission check failed: %w", err)
 	}
+	ch <- "Workspace permissions check passed."
 	return os.Remove(filepath.Join(filepath.Dir(exe), ".perm_check"))
 }
