@@ -4,22 +4,18 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/madeinly/core/models"
 )
 
-type Error struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-	Code    string `json:"code"`
-}
-
 type Bag struct {
-	Errors []Error `json:"errors,omitempty"`
+	Errors []models.Error `json:"errors,omitempty"`
 }
 
 func New() *Bag { return &Bag{} }
 
 func (b *Bag) Add(field, code, message string) {
-	b.Errors = append(b.Errors, Error{
+	b.Errors = append(b.Errors, models.Error{
 		Field:   field,
 		Code:    code,
 		Message: message,
@@ -45,11 +41,11 @@ func (b *Bag) WriteHTTP(w http.ResponseWriter) error {
 }
 
 // Rule validates a single field and returns every error it finds.
-type Rule[T any] func(T) []*Error
+type rule func(string) []*models.Error
 
 // Validate runs one rule for one value and collects its errors.
-func Validate[T any](b *Bag, value T, rule Rule[T]) {
-	for _, e := range rule(value) {
+func (b *Bag) Validate(value string, r rule) {
+	for _, e := range r(value) {
 		if e != nil {
 			b.Add(e.Field, e.Code, e.Message)
 		}

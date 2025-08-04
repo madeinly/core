@@ -9,8 +9,8 @@ import (
 	"github.com/madeinly/core/internal/files"
 	"github.com/madeinly/core/internal/logger"
 	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/internal/validation"
 	"github.com/madeinly/core/models"
-	"github.com/madeinly/core/validation"
 )
 
 // --- Exposed Core Features ---
@@ -88,5 +88,3 @@ func Start(featuresAvailable models.Features) {
 
 	cmd.CmdRouter()
 }
-
-// --- Utility Functions ---

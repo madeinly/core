@@ -24,3 +24,11 @@ type FeaturePackage struct {
 	Setup     func() error
 	Cmd       func()
 }
+
+type Rule func(any) []*Error
+
+type Error struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+	Code    string `json:"code"`
+}
