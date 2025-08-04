@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/madeinly/core/settings"
+	"github.com/madeinly/core/internal/settings"
 )
 
 // RunChecks verifies all critical dependencies and permissions at startup.

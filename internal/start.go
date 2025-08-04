@@ -7,7 +7,7 @@ import (
 
 	"github.com/madeinly/core/internal/files"
 	"github.com/madeinly/core/internal/server"
-	"github.com/madeinly/core/settings"
+	"github.com/madeinly/core/internal/settings"
 )
 
 func StartServer(

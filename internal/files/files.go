@@ -2,9 +2,11 @@ package files
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
+	"github.com/madeinly/core/internal/fatal"
 	"golang.org/x/sys/unix"
 )
 
@@ -62,4 +64,12 @@ func FilesIntegrity() ([]string, error) {
 func isSQLiteFile(name string) bool {
 	base := filepath.Base(name)
 	return strings.HasSuffix(base, ".sqlite") || strings.Contains(base, ".sqlite-")
+}
+
+func RootPath() string {
+	binPath, err := os.Executable()
+	if err != nil {
+		fatal.OnErr(err, "Could not determine the application's root path")
+	}
+	return path.Dir(binPath)
 }

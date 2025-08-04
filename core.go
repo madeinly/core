@@ -1,18 +1,15 @@
 package core
 
 import (
-	"database/sql"
-	"os"
-	"path"
-
-	"github.com/madeinly/core/email"
-	"github.com/madeinly/core/fatal"
 	"github.com/madeinly/core/internal/cmd"
 	"github.com/madeinly/core/internal/db"
+	"github.com/madeinly/core/internal/email"
+	"github.com/madeinly/core/internal/fatal"
 	"github.com/madeinly/core/internal/features"
-	"github.com/madeinly/core/logger"
+	"github.com/madeinly/core/internal/files"
+	"github.com/madeinly/core/internal/logger"
+	"github.com/madeinly/core/internal/settings"
 	"github.com/madeinly/core/models"
-	"github.com/madeinly/core/settings"
 	"github.com/madeinly/core/validation"
 )
 
@@ -64,7 +61,7 @@ var RawSettings = settings.GetRawSettings
 // Example:
 //
 //	bag := core.Validate()
-//	bag.Add("email", "invalid-format", "Email address is not valid")
+//	bag.Validate(value, rule)
 var Validate = validation.New
 
 // SendEmail sends an email using the SMTP settings configured in settings.toml.
@@ -73,6 +70,13 @@ var Validate = validation.New
 //
 //	err := core.SendEmail("user@example.com", "Welcome!", "Your account is ready.")
 var SendEmail = email.Send
+
+// RootPath returns the absolute path to the directory where the application
+// executable is located.
+var RootPath = files.RootPath
+
+// DB returns a pointer to the established database connection.
+var DB = db.GetDB
 
 // --- Application Lifecycle ---
 
@@ -86,19 +90,3 @@ func Start(featuresAvailable models.Features) {
 }
 
 // --- Utility Functions ---
-
-// DB returns a pointer to the established database connection.
-func DB() *sql.DB {
-	db := db.GetDB()
-	return db
-}
-
-// RootPath returns the absolute path to the directory where the application
-// executable is located.
-func RootPath() string {
-	binPath, err := os.Executable()
-	if err != nil {
-		Fatal(err, "Could not determine the application's root path")
-	}
-	return path.Dir(binPath)
-}

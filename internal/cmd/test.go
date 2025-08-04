@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/madeinly/core/email"
+	"github.com/madeinly/core/internal/email"
 	"github.com/spf13/cobra"
 )
 
