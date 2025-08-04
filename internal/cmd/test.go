@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/madeinly/core/internal/files"
+	"github.com/madeinly/core/email"
 	"github.com/spf13/cobra"
 )
 
@@ -43,13 +43,10 @@ The command is idempotent - it can be safely run multiple times as it will
 only make changes when necessary.`,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		path, err := files.FilesIntegrity()
+		err := email.Send("soyrbto@gmail.com", "testing", "hola, esta es una prueba")
 
 		if err != nil {
 			fmt.Println(err.Error())
-			return
 		}
-
-		fmt.Println(path)
 	},
 }

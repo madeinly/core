@@ -19,6 +19,41 @@ func ErrorLog() {
 
 }
 
+func Log(err error, msg string, data string) {
+	binaryPath, err := os.Executable()
+	if err != nil {
+		log.Printf("ERROR: Failed to get executable path: %v\n", err)
+		return
+	}
+
+	folderPath := filepath.Join(filepath.Dir(binaryPath), "logs")
+	fileName := filepath.Join(folderPath, "error.log")
+
+	if err := os.MkdirAll(folderPath, 0755); err != nil {
+		log.Printf("ERROR: Failed to create log directory '%s': %v\n", folderPath, err)
+		return
+	}
+
+	errorLog, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Printf("ERROR: Failed to open log file '%s': %v\n", fileName, err)
+		return
+	}
+	defer errorLog.Close()
+
+	logMessage := fmt.Sprintf(
+		"%s - %s - %s\n",
+		time.Now().Format("02/Jan/2006:15:04:05 -0700"),
+		msg,
+		data,
+	)
+
+	if _, err := errorLog.WriteString(logMessage); err != nil {
+		log.Printf("ERROR: Failed to write to log file '%s': %v\n", fileName, err)
+	}
+
+}
+
 func AccessLog(r *http.Request, status int, responseSize int64) {
 	// Get binary path and determine log directory
 	binaryPath, err := os.Executable()

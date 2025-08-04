@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/madeinly/core/internal/logger"
-	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/logger"
+	"github.com/madeinly/core/settings"
 )
 
 func Logging(next http.Handler) http.Handler {

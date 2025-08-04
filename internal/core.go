@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/madeinly/core/fatal"
 	"github.com/madeinly/core/internal/files"
 	"github.com/madeinly/core/internal/server"
-	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/settings"
 )
 
 func StartServer(
@@ -18,7 +17,7 @@ func StartServer(
 	port string,
 	quiet bool) error {
 
-	fatal.Init()
+	RunChecks(ch)
 
 	defer func() {
 		close(ch)
@@ -45,8 +44,6 @@ func StartServer(
 
 	// Settings handles ====================== //
 	go settings.WatchSettings()
-
-	settings.SetSettings()
 
 	currentSettings := settings.GetSettings()
 

@@ -16,20 +16,65 @@ type AppSettings struct {
 	FrontDomain string `toml:"frontDomain"`
 	Address     string `toml:"address"`
 	Port        string `toml:"port"`
+	Email       struct {
+		User       string `toml:"user"`
+		Address    string `toml:"address"`
+		Port       string `toml:"port"`
+		Password   string `toml:"password"`
+		Encryption string `toml:"encryption"`
+	} `toml:"email"`
 }
 
 var (
 	settings     AppSettings
 	settingsLock sync.RWMutex
+	initOnce     sync.Once
 )
 
+// GetSettings ensures that settings are loaded before returning them.
+// It will panic if the initial settings load fails.
 func GetSettings() AppSettings {
+	initOnce.Do(func() {
+		if err := setSettings(); err != nil {
+			log.Fatalf("FATAL: Failed to load initial settings: %v", err)
+		}
+	})
+
 	settingsLock.RLock()
 	defer settingsLock.RUnlock()
 	return settings
 }
 
-func SetSettings() error {
+// GetRawSettings reads the settings.toml file and returns its content as a raw map.
+// It also ensures the structured settings are loaded for the application.
+func GetRawSettings() (map[string]interface{}, error) {
+	initOnce.Do(func() {
+		if err := setSettings(); err != nil {
+			log.Fatalf("FATAL: Failed to load initial settings: %v", err)
+		}
+	})
+
+	binPath, err := os.Executable()
+	if err != nil {
+		return nil, err
+	}
+
+	settingsPath := filepath.Join(filepath.Dir(binPath), "settings.toml")
+	settingsByte, err := os.ReadFile(settingsPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var rawSettings map[string]interface{}
+	if err := toml.Unmarshal(settingsByte, &rawSettings); err != nil {
+		return nil, err
+	}
+
+	return rawSettings, nil
+}
+
+// setSettings is the internal function that performs the loading of settings.
+func setSettings() error {
 	binPath, err := os.Executable()
 	if err != nil {
 		return err
@@ -57,6 +102,7 @@ func SetSettings() error {
 	return nil
 }
 
+// WatchSettings continuously monitors the settings.toml file for changes.
 func WatchSettings() {
 	binPath, err := os.Executable()
 	if err != nil {
@@ -77,7 +123,7 @@ func WatchSettings() {
 
 		modified := fileInfo.ModTime() != lastModTime || fileInfo.Size() != lastSize
 		if modified {
-			if err := SetSettings(); err != nil {
+			if err := setSettings(); err != nil {
 				log.Println("Failed to reload settings:", err)
 			} else {
 				lastModTime = fileInfo.ModTime()
