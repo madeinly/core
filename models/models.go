@@ -25,8 +25,6 @@ type FeaturePackage struct {
 	Cmd       func()
 }
 
-type Rule func(any) []*Error
-
 type Error struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
