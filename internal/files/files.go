@@ -2,7 +2,6 @@ package files
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -63,15 +62,4 @@ func FilesIntegrity() ([]string, error) {
 func isSQLiteFile(name string) bool {
 	base := filepath.Base(name)
 	return strings.HasSuffix(base, ".sqlite") || strings.Contains(base, ".sqlite-")
-}
-
-func RootPath() string {
-
-	binPath, err := os.Executable()
-
-	if err != nil {
-		os.Exit(1)
-	}
-
-	return path.Dir(binPath)
 }

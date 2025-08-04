@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/madeinly/core/fatal"
 	"github.com/madeinly/core/internal/files"
 	"github.com/madeinly/core/internal/server"
 	"github.com/madeinly/core/internal/settings"
@@ -16,6 +17,8 @@ func StartServer(
 	address string,
 	port string,
 	quiet bool) error {
+
+	fatal.Init()
 
 	defer func() {
 		close(ch)
