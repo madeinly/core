@@ -42,7 +42,13 @@ if there is no settings it will automatically generates a settings file with add
 			}
 		}()
 
-		err = internal.StartServer(ch, &wg, address, port, quiet)
+		err = internal.StartServer(internal.StartServerParams{
+			Ch:      ch,
+			Wg:      &wg,
+			Address: address,
+			Port:    port,
+			Quiet:   quiet,
+		})
 
 		if err != nil {
 			wg.Wait()

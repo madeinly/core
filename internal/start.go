@@ -10,18 +10,21 @@ import (
 	"github.com/madeinly/core/internal/settings"
 )
 
-func StartServer(
-	ch chan<- string,
-	wg *sync.WaitGroup,
-	address string,
-	port string,
-	quiet bool) error {
+type StartServerParams struct {
+	Ch      chan<- string
+	Wg      *sync.WaitGroup
+	Address string
+	Port    string
+	Quiet   bool
+}
 
-	RunChecks(ch)
+func StartServer(params StartServerParams) error {
+
+	RunChecks(params.Ch)
 
 	defer func() {
-		close(ch)
-		wg.Wait()
+		close(params.Ch)
+		params.Wg.Wait()
 	}()
 
 	// Integrity Validations ==================//
@@ -33,10 +36,10 @@ func StartServer(
 
 	if len(troubleFiles) > 0 {
 
-		ch <- "Some files seems to be lack of permissions or ownership"
+		params.Ch <- "Some files seems to be lack of permissions or ownership"
 
 		for _, file := range troubleFiles {
-			ch <- file
+			params.Ch <- file
 		}
 
 		return fmt.Errorf("")
@@ -54,31 +57,31 @@ func StartServer(
 		currentSettingsJson, err := json.MarshalIndent(currentSettings, "", " ")
 
 		if err != nil {
-			close(ch)
+			close(params.Ch)
 			return err
 		}
-		ch <- "Current Settings:"
+		params.Ch <- "Current Settings:"
 
-		ch <- string(currentSettingsJson)
+		params.Ch <- string(currentSettingsJson)
 	}
 
 	// start server pre-flight  ====================== //
 
-	if port == "" {
-		port = currentSettings.Port
+	if params.Port == "" {
+		params.Port = currentSettings.Port
 	}
 
-	if address == "" {
-		address = currentSettings.Address
+	if params.Address == "" {
+		params.Address = currentSettings.Address
 	}
 
-	ch <- fmt.Sprintf("The server is running on %s:%s", address, port)
+	params.Ch <- fmt.Sprintf("The server is running on %s:%s", params.Address, params.Port)
 
 	// Server Launch TTY took over by the server listener  ====================== //
 	//[!TODO]: run the server without attaching to the tty
-	if quiet {
-		return server.Start(address, port)
+	if params.Quiet {
+		return server.Start(params.Address, params.Port)
 	}
 
-	return server.Start(address, port)
+	return server.Start(params.Address, params.Port)
 }
