@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"os"
+	"os/signal"
 	"sync"
 
 	"github.com/madeinly/core/internal"
@@ -31,6 +34,21 @@ if there is no settings it will automatically generates a settings file with add
 			fmt.Printf("error getting quite value: %v", err)
 		}
 
+		// Create a context that can be cancelled.
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		// Set up a channel to listen for OS signals.
+		sigs := make(chan os.Signal, 1)
+		signal.Notify(sigs, os.Interrupt)
+
+		// Start a goroutine to handle the signals.
+		go func() {
+			<-sigs
+			fmt.Println("\nReceived interrupt signal, shutting down...")
+			cancel()
+		}()
+
 		ch := make(chan string)
 		var wg sync.WaitGroup
 		wg.Add(1)
@@ -42,7 +60,7 @@ if there is no settings it will automatically generates a settings file with add
 			}
 		}()
 
-		err = internal.StartServer(internal.StartServerParams{
+		err = internal.StartServer(ctx, internal.StartServerParams{
 			Ch:      ch,
 			Wg:      &wg,
 			Address: address,

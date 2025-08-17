@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"context"
 	"log"
 	"os"
 	"path/filepath"
@@ -103,7 +104,7 @@ func setSettings() error {
 }
 
 // WatchSettings continuously monitors the settings.toml file for changes.
-func WatchSettings() {
+func WatchSettings(ctx context.Context) {
 	binPath, err := os.Executable()
 	if err != nil {
 		log.Fatal(err)
@@ -113,24 +114,29 @@ func WatchSettings() {
 	lastModTime := time.Time{}
 	lastSize := int64(0)
 
-	for {
-		fileInfo, err := os.Stat(settingsPath)
-		if err != nil {
-			log.Println("Error checking file:", err)
-			time.Sleep(1 * time.Second)
-			continue
-		}
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
-		modified := fileInfo.ModTime() != lastModTime || fileInfo.Size() != lastSize
-		if modified {
-			if err := setSettings(); err != nil {
-				log.Println("Failed to reload settings:", err)
-			} else {
-				lastModTime = fileInfo.ModTime()
-				lastSize = fileInfo.Size()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			fileInfo, err := os.Stat(settingsPath)
+			if err != nil {
+				log.Println("Error checking file:", err)
+				continue
+			}
+
+			modified := fileInfo.ModTime() != lastModTime || fileInfo.Size() != lastSize
+			if modified {
+				if err := setSettings(); err != nil {
+					log.Println("Failed to reload settings:", err)
+				} else {
+					lastModTime = fileInfo.ModTime()
+					lastSize = fileInfo.Size()
+				}
 			}
 		}
-
-		time.Sleep(1 * time.Second)
 	}
 }

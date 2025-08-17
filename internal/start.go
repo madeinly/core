@@ -1,7 +1,9 @@
 package internal
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -9,6 +11,8 @@ import (
 	"github.com/madeinly/core/internal/server"
 	"github.com/madeinly/core/internal/settings"
 )
+
+var ErrFileIntegrity = errors.New("file integrity check failed, see logs for details")
 
 type StartServerParams struct {
 	Ch      chan<- string
@@ -18,7 +22,7 @@ type StartServerParams struct {
 	Quiet   bool
 }
 
-func StartServer(params StartServerParams) error {
+func StartServer(ctx context.Context, params StartServerParams) error {
 
 	RunChecks(params.Ch)
 
@@ -42,11 +46,11 @@ func StartServer(params StartServerParams) error {
 			params.Ch <- file
 		}
 
-		return fmt.Errorf("")
+		return ErrFileIntegrity
 	}
 
 	// Settings handles ====================== //
-	go settings.WatchSettings()
+	go settings.WatchSettings(ctx)
 
 	currentSettings := settings.GetSettings()
 
@@ -57,7 +61,6 @@ func StartServer(params StartServerParams) error {
 		currentSettingsJson, err := json.MarshalIndent(currentSettings, "", " ")
 
 		if err != nil {
-			close(params.Ch)
 			return err
 		}
 		params.Ch <- "Current Settings:"
@@ -79,9 +82,5 @@ func StartServer(params StartServerParams) error {
 
 	// Server Launch TTY took over by the server listener  ====================== //
 	//[!TODO]: run the server without attaching to the tty
-	if params.Quiet {
-		return server.Start(params.Address, params.Port)
-	}
-
 	return server.Start(params.Address, params.Port)
 }
