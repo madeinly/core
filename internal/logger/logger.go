@@ -15,11 +15,8 @@ import (
 	"github.com/fatih/color"
 )
 
-func ErrorLog() {
+func Log(msg string, data string) {
 
-}
-
-func Log(err error, msg string, data string) {
 	binaryPath, err := os.Executable()
 	if err != nil {
 		log.Printf("ERROR: Failed to get executable path: %v\n", err)
@@ -121,10 +118,14 @@ func DebugLog(req *http.Request, res *httptest.ResponseRecorder) {
 	// get Body
 	var requestBody string
 
-	bodyBytes, err := io.ReadAll(res.Body)
-	if err == nil {
-		requestBody = string(bodyBytes)
-		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	if res.Body != nil {
+
+		bodyBytes, err := io.ReadAll(res.Body)
+		if err == nil {
+			requestBody = string(bodyBytes)
+			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		}
+
 	}
 
 	// start template
