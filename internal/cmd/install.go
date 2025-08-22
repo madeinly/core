@@ -12,50 +12,69 @@ import (
 var InstallCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Initialize and configure the application database",
-	Long: `The install command performs complete database setup for the application.
-    
-This command will:
-1. Create all necessary database tables and structures
-2. Run all available schema migrations
-3. Populate the database with initial seed data
-
-This is typically run:
-- When first setting up the application
-- After cloning the project to a new environment
-- When you need to reset the database to a fresh state
-
-Examples:
-  # Basic installation
-  myapp install
-  
-  # Installation with verbose output
-  myapp install --verbose
-
-Warning: Running this command on an existing database will:
-- Apply any pending migrations
-- Recreate seed data
-- Potentially overwrite existing records in seed tables
-
-The command is idempotent - it can be safely run multiple times as it will
-only make changes when necessary.`,
+	Long:  ``,
 
 	Run: func(cmd *cobra.Command, args []string) {
-		runInstall()
+
+		// crear un slice y popularlo con los datos de las flags
+
+		setupArgs := make(map[string]map[string]string)
+
+		var err error
+
+		for _, feature := range features.Available {
+			if feature.Args == nil {
+				continue
+			}
+
+			// create inner map for this feature
+			if setupArgs[feature.Name] == nil {
+				setupArgs[feature.Name] = make(map[string]string)
+			}
+
+			for _, arg := range feature.Args {
+
+				val, err := cmd.Flags().GetString(arg.Name)
+				if err != nil {
+					fmt.Printf("error getting %s: %v\n", arg.Name, err)
+					return
+				}
+				setupArgs[feature.Name][arg.Name] = val
+			}
+		}
+
+		err = runners.RunMigrations(features.Available)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		runners.RunSetupPackages(setupArgs)
 	},
 }
 
 func init() {
+
 	rootCmd.AddCommand(InstallCmd)
-}
 
-func runInstall() {
+	fmt.Println("feature", features.Available)
 
-	err := runners.RunMigrations(features.Available)
+	for _, feature := range features.Available {
 
-	if err != nil {
-		fmt.Println(err.Error())
+		if feature.Args == nil {
+			continue
+		}
+
+		for _, arg := range feature.Args {
+
+			InstallCmd.Flags().String(arg.Name, "", arg.Description)
+
+			if arg.Required {
+				InstallCmd.MarkFlagRequired(feature.Name + "_" + arg.Name)
+			}
+
+		}
+
 	}
-
-	runners.RunSetupPackages(features.Available)
 
 }

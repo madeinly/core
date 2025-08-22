@@ -17,12 +17,20 @@ type Migration struct {
 
 type Features []FeaturePackage
 
+type Arg struct {
+	Name        string
+	Default     string
+	Required    bool
+	Description string
+}
+
 type FeaturePackage struct {
 	Name      string
 	Routes    []Route
 	Migration Migration
-	Setup     func() error
+	Setup     func(map[string]string) error
 	Cmd       func()
+	Args      []Arg
 }
 
 type Error struct {

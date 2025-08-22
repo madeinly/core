@@ -3,7 +3,7 @@ package runners
 import (
 	"fmt"
 
-	"github.com/madeinly/core/models"
+	"github.com/madeinly/core/internal/features"
 )
 
 type SetupFunc func() error
@@ -14,18 +14,18 @@ type SetupFeature struct {
 }
 
 // RunAll executes all registered setup functions
-func RunSetupPackages(features models.Features) error {
+func RunSetupPackages(setupArgs map[string]map[string]string) error {
 
-	for _, feature := range features {
+	for _, feature := range features.Available {
 
-		err := feature.Setup()
+		err := feature.Setup(setupArgs[feature.Name])
 		if err != nil {
 			return fmt.Errorf("failed to execute setup %s: %w", feature.Name, err)
 		}
 
 	}
 
-	fmt.Println("todo salio chevere")
+	fmt.Println("all modules were successfully setup")
 
 	return nil
 }

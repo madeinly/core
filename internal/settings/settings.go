@@ -17,6 +17,7 @@ type AppSettings struct {
 	FrontDomain string `toml:"frontDomain"`
 	Address     string `toml:"address"`
 	Port        string `toml:"port"`
+	JWTSalt     string `toml:"jwtSalt"`
 	Email       struct {
 		User       string `toml:"user"`
 		Address    string `toml:"address"`
