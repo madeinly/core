@@ -16,10 +16,16 @@ type SetupFeature struct {
 // RunAll executes all registered setup functions
 func RunSetupPackages(setupArgs map[string]map[string]string) error {
 
+	fmt.Println(setupArgs)
+
 	for _, feature := range features.Available {
 
+		fmt.Println(feature.Name)
+
 		err := feature.Setup(setupArgs[feature.Name])
+		fmt.Println("passed the user")
 		if err != nil {
+			fmt.Println(err)
 			return fmt.Errorf("failed to execute setup %s: %w", feature.Name, err)
 		}
 

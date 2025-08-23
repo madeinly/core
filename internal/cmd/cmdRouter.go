@@ -23,6 +23,7 @@ func CmdRouter() {
 		defer func() { os.Args = oldArgs }()
 		os.Args = append([]string{featureName}, remainingArgs...)
 
+		SetupInstallCmd()
 		Execute()
 		return
 	}

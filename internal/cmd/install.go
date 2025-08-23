@@ -53,12 +53,7 @@ var InstallCmd = &cobra.Command{
 	},
 }
 
-func init() {
-
-	rootCmd.AddCommand(InstallCmd)
-
-	fmt.Println("feature", features.Available)
-
+func SetupInstallCmd() {
 	for _, feature := range features.Available {
 
 		if feature.Args == nil {
@@ -67,14 +62,18 @@ func init() {
 
 		for _, arg := range feature.Args {
 
-			InstallCmd.Flags().String(arg.Name, "", arg.Description)
-
 			if arg.Required {
-				InstallCmd.MarkFlagRequired(feature.Name + "_" + arg.Name)
+				InstallCmd.Flags().String(arg.Name, "", arg.Description)
+				InstallCmd.MarkFlagRequired(arg.Name)
+				continue
 			}
 
+			InstallCmd.Flags().String(arg.Name, arg.Default, arg.Description)
 		}
 
 	}
+}
 
+func init() {
+	rootCmd.AddCommand(InstallCmd)
 }
