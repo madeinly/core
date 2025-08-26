@@ -63,6 +63,7 @@ var RawSettings = settings.GetRawSettings
 //	bag := core.Validate()
 //	bag.Validate(value, rule)
 var Validate = validation.New
+var IsErrors = validation.IsErrors
 
 // SendEmail sends an email using the SMTP settings configured in settings.toml.
 //

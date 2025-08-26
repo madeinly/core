@@ -20,11 +20,14 @@ type StartServerParams struct {
 	Address string
 	Port    string
 	Quiet   bool
+	Demo    bool
 }
 
 func StartServer(ctx context.Context, params StartServerParams) error {
 
-	RunChecks(params.Ch)
+	if params.Demo {
+		RunChecks(params.Ch)
+	}
 
 	defer func() {
 		close(params.Ch)

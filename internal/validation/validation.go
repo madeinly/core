@@ -40,6 +40,29 @@ func (b *Bag) WriteHTTP(w http.ResponseWriter) error {
 	return b.WriteJSON(w)
 }
 
+func (b *Bag) Error() string {
+
+	error, err := json.MarshalIndent(b, "", " ")
+
+	if err != nil {
+		return "could not parse the errors"
+	}
+
+	return string(error)
+}
+
+func IsErrors(err error) (*Bag, bool) {
+
+	value, ok := err.(*Bag)
+
+	if ok {
+		return value, true
+	}
+
+	return nil, false
+
+}
+
 // Rule validates a single field and returns every error it finds.
 type rule func(string) []*models.Error
 

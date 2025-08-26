@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	_ "modernc.org/sqlite"
 )
 
 var (

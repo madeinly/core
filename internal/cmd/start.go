@@ -34,6 +34,11 @@ if there is no settings it will automatically generates a settings file with add
 			fmt.Printf("error getting quite value: %v", err)
 		}
 
+		demo, err := cmd.Flags().GetBool("quiet")
+		if err != nil {
+			fmt.Printf("error getting quite value: %v", err)
+		}
+
 		// Create a context that can be cancelled.
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
@@ -66,6 +71,7 @@ if there is no settings it will automatically generates a settings file with add
 			Address: address,
 			Port:    port,
 			Quiet:   quiet,
+			Demo:    demo,
 		})
 
 		if err != nil {
@@ -80,5 +86,6 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 	serveCmd.Flags().String("address", "", "address to run the server on")
 	serveCmd.Flags().String("port", "", "port to run the server on")
+	serveCmd.Flags().Bool("demo", true, "if preflight securitty check and others must run for production")
 	serveCmd.Flags().BoolP("quiet", "q", false, "detach the server from the terminal")
 }
