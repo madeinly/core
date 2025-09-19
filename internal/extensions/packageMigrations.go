@@ -1,15 +1,15 @@
-package runners
+package extensions
 
 import (
 	"fmt"
 	"log"
 
-	"github.com/madeinly/core/internal/db"
-	"github.com/madeinly/core/models"
+	"github.com/madeinly/core/internal/features/db"
+	v1 "github.com/madeinly/core/v1"
 )
 
 // RunAll executes all registered migrations
-func RunMigrations(features models.Features) error {
+func RunMigrations(features v1.Features) error {
 
 	dbConn := db.GetDB()
 

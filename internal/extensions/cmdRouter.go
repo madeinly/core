@@ -1,10 +1,8 @@
-package cmd
+package extensions
 
 import (
 	"fmt"
 	"os"
-
-	"github.com/madeinly/core/internal/features"
 )
 
 func CmdRouter() {
@@ -17,26 +15,21 @@ func CmdRouter() {
 	featureName := os.Args[1]
 	remainingArgs := os.Args[2:]
 
-	// Handle core execution
-	if featureName == "core" {
-		oldArgs := os.Args
-		defer func() { os.Args = oldArgs }()
-		os.Args = append([]string{featureName}, remainingArgs...)
-
-		SetupInstallCmd()
-		Execute()
-		return
-	}
-
-	// Feature routing
+	/*
+		will hold the feature routing (if exist) entry point
+	*/
 	var targetCmd func()
-	for _, feature := range features.Available {
+
+	for _, feature := range Available {
 		if feature.Name == featureName {
 			targetCmd = feature.Cmd
 			break
 		}
 	}
 
+	/*
+		maybe in the future avoid sending data from here and instead adding a central channel for that
+	*/
 	if targetCmd == nil {
 		fmt.Printf("Unknown feature: %s\n", featureName)
 		os.Exit(1)

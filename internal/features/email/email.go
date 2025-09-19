@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/internal/features/settings"
 )
 
 // Send dispatches an email, handling both SSL/TLS and STARTTLS connections.

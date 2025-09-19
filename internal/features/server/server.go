@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/madeinly/core/internal/features"
+	"github.com/madeinly/core/internal/extensions"
 )
 
 func SetupRoutes(mux *http.ServeMux) {
 
-	for _, feature := range features.Available {
+	for _, feature := range extensions.Available {
 
 		for _, route := range feature.Routes {
 

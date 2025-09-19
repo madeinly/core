@@ -1,4 +1,4 @@
-package internal
+package safetyControl
 
 import (
 	"crypto/tls"
@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/internal/features/settings"
 )
 
 // RunChecks verifies all critical dependencies and permissions at startup.

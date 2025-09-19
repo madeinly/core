@@ -1,4 +1,4 @@
-package internal
+package flows
 
 import (
 	"context"
@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/madeinly/core/internal/files"
-	"github.com/madeinly/core/internal/server"
-	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/internal/features/safetyControl"
+	"github.com/madeinly/core/internal/features/server"
+	"github.com/madeinly/core/internal/features/settings"
 )
 
 var ErrFileIntegrity = errors.New("file integrity check failed, see logs for details")
@@ -26,7 +26,7 @@ type StartServerParams struct {
 func StartServer(ctx context.Context, params StartServerParams) error {
 
 	if params.Demo {
-		RunChecks(params.Ch)
+		safetyControl.RunChecks(params.Ch)
 	}
 
 	defer func() {
@@ -35,7 +35,7 @@ func StartServer(ctx context.Context, params StartServerParams) error {
 	}()
 
 	// Integrity Validations ==================//
-	troubleFiles, err := files.FilesIntegrity()
+	troubleFiles, err := safetyControl.FilesIntegrity()
 
 	if err != nil {
 		return fmt.Errorf("could not validate files:%w", err)

@@ -1,9 +1,7 @@
-package runners
+package extensions
 
 import (
 	"fmt"
-
-	"github.com/madeinly/core/internal/features"
 )
 
 type SetupFunc func() error
@@ -18,7 +16,7 @@ func RunSetupPackages(setupArgs map[string]map[string]string) error {
 
 	fmt.Println(setupArgs)
 
-	for _, feature := range features.Available {
+	for _, feature := range Available {
 
 		fmt.Println(feature.Name)
 

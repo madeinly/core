@@ -7,8 +7,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/madeinly/core/internal/email"
-	"github.com/madeinly/core/internal/settings"
+	"github.com/madeinly/core/internal/features/email"
+	"github.com/madeinly/core/internal/features/settings"
 )
 
 // OnErr logs, attempts to notify, and then exits the program.

@@ -1,4 +1,4 @@
-package files
+package safetyControl
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/madeinly/core/internal/fatal"
+	"github.com/madeinly/core/internal/features/fatal"
 	"golang.org/x/sys/unix"
 )
 

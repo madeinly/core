@@ -1,13 +1,15 @@
-package models
+package v1
 
 import (
 	"net/http"
+
+	"github.com/madeinly/core/internal/features/validation"
 )
 
 type Route struct {
 	Type    string
 	Pattern string
-	Handler http.HandlerFunc
+	Handler http.Handler
 }
 
 type Migration struct {
@@ -33,8 +35,4 @@ type FeaturePackage struct {
 	Args      []Arg
 }
 
-type Error struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-	Code    string `json:"code"`
-}
+type Error = validation.Error

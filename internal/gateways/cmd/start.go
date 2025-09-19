@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"sync"
 
-	"github.com/madeinly/core/internal"
+	"github.com/madeinly/core/internal/flows"
 	"github.com/spf13/cobra"
 )
 
@@ -65,7 +65,7 @@ if there is no settings it will automatically generates a settings file with add
 			}
 		}()
 
-		err = internal.StartServer(ctx, internal.StartServerParams{
+		err = flows.StartServer(ctx, flows.StartServerParams{
 			Ch:      ch,
 			Wg:      &wg,
 			Address: address,
