@@ -16,11 +16,10 @@ Not sure if it has any use beyond being the start point
 if it has no use find the best way to disable its access to users
 */
 var rootCmd = &cobra.Command{
-	Use:   "",
+	Use:   "core",
 	Short: "simplest cms commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		extensions.CmdRouter()
-
 	},
 }
 
