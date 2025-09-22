@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/madeinly/core/internal/extensions"
 	"github.com/madeinly/core/internal/features/db"
 	"github.com/madeinly/core/internal/features/email"
 	"github.com/madeinly/core/internal/features/fatal"
@@ -8,6 +9,7 @@ import (
 	"github.com/madeinly/core/internal/features/safetyControl"
 	"github.com/madeinly/core/internal/features/settings"
 	"github.com/madeinly/core/internal/features/validation"
+	"github.com/madeinly/core/internal/gateways/cmd"
 )
 
 // --- Exposed Core Features ---
@@ -80,3 +82,8 @@ var DB = db.GetDB
 
 // Start initializes the application, runs pre-flight checks, registers features,
 // and starts the command router.
+
+// This starts the app
+var Start = cmd.Execute
+
+var RegisterFeatures = extensions.RegisterFeatures

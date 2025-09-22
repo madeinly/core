@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/madeinly/core/internal/features/email"
 	"github.com/spf13/cobra"
 )
 
@@ -17,10 +16,11 @@ var testCmd = &cobra.Command{
 	Short: "Initialize and configure the application database",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		err := email.Send("soyrbto@gmail.com", "testing", "hola, esta es una prueba")
+		// err := email.Send("soyrbto@gmail.com", "testing", "hola, esta es una prueba")
+		fmt.Println("test triggered")
 
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// }
 	},
 }

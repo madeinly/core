@@ -31,7 +31,7 @@ func CmdRouter() {
 		maybe in the future avoid sending data from here and instead adding a central channel for that
 	*/
 	if targetCmd == nil {
-		fmt.Printf("Unknown feature: %s\n", featureName)
+		fmt.Printf("Unknown feature: %s", featureName)
 		os.Exit(1)
 	}
 

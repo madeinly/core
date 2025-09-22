@@ -5,11 +5,10 @@ import (
 	"log"
 
 	"github.com/madeinly/core/internal/features/db"
-	v1 "github.com/madeinly/core/v1"
 )
 
 // RunAll executes all registered migrations
-func RunMigrations(features v1.Features) error {
+func RunMigrations(features Features) error {
 
 	dbConn := db.GetDB()
 
