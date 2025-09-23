@@ -1,4 +1,4 @@
-package v1
+package core
 
 import (
 	"github.com/madeinly/core/internal/extensions"
