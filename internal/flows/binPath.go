@@ -1,19 +1,17 @@
 package flows
 
 import (
-	"os"
-	"path/filepath"
-
 	"github.com/madeinly/core/internal/features/fatal"
+	"github.com/madeinly/core/internal/features/files"
 )
 
 func BinPath() string {
 
-	binPath, err := os.Executable()
+	binPath, err := files.BinPath()
 
 	if err != nil {
 		fatal.FatalError(err, "the binary path could not be retrieved")
 	}
 
-	return filepath.Dir(binPath)
+	return binPath
 }

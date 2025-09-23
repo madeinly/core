@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/madeinly/core/internal/flows"
 	"github.com/spf13/cobra"
 )
 
@@ -16,11 +17,14 @@ var testCmd = &cobra.Command{
 	Short: "Initialize and configure the application database",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		// err := email.Send("soyrbto@gmail.com", "testing", "hola, esta es una prueba")
-		fmt.Println("test triggered")
 
-		// if err != nil {
-		// 	fmt.Println(err.Error())
-		// }
+		tempFile := flows.TempFile()
+
+		tempFile.WriteString("yenny es lo mas bonito que hay")
+
+		fmt.Println(tempFile.Name())
+
+		defer tempFile.Close()
+
 	},
 }
