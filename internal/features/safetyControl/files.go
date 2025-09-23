@@ -69,7 +69,7 @@ func isSQLiteFile(name string) bool {
 func RootPath() string {
 	binPath, err := os.Executable()
 	if err != nil {
-		fatal.OnErr(err, "Could not determine the application's root path")
+		fatal.FatalError(err, "Could not determine the application's root path")
 	}
 	return path.Dir(binPath)
 }

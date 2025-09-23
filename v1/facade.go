@@ -9,6 +9,7 @@ import (
 	"github.com/madeinly/core/internal/features/safetyControl"
 	"github.com/madeinly/core/internal/features/settings"
 	"github.com/madeinly/core/internal/features/validation"
+	"github.com/madeinly/core/internal/flows"
 	"github.com/madeinly/core/internal/gateways/cmd"
 )
 
@@ -23,7 +24,7 @@ import (
 //	if err != nil {
 //	    core.Fatal(err, "Failed to connect to the database")
 //	}
-var Fatal = fatal.OnErr
+var Fatal = fatal.FatalError
 
 // Log records a non-critical error or warning to the error log file.
 // This is for situations that are unexpected but do not require the
@@ -87,3 +88,6 @@ var DB = db.GetDB
 var Start = cmd.Execute
 
 var RegisterFeatures = extensions.RegisterFeatures
+
+// Get the binPath folder path
+var BinPath = flows.BinPath

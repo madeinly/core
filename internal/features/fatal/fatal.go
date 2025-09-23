@@ -13,7 +13,7 @@ import (
 
 // OnErr logs, attempts to notify, and then exits the program.
 // It never returns.
-func OnErr(err error, msg string, args ...any) {
+func FatalError(err error, msg string, args ...any) {
 	if err == nil {
 		return
 	}
