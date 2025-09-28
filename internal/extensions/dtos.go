@@ -2,13 +2,13 @@ package extensions
 
 import "net/http"
 
-type FeaturePackage struct {
-	Name      string
-	Routes    []Route
-	Migration Migration
-	Setup     func(map[string]string) error
-	Cmd       func()
-	Args      []Arg
+type Mod struct {
+	Name        string
+	Routes      []Route
+	Migration   Migration
+	Setup       func(map[string]string) error
+	Cmd         func()
+	InstallArgs []InstallArg
 }
 
 type Route struct {
@@ -22,11 +22,11 @@ type Migration struct {
 	Schema string
 }
 
-type Arg struct {
+type InstallArg struct {
 	Name        string
 	Default     string
 	Required    bool
 	Description string
 }
 
-type Features []FeaturePackage
+type Mods []Mod

@@ -8,7 +8,7 @@ import (
 )
 
 // RunAll executes all registered migrations
-func RunMigrations(features Features) error {
+func RunMigrations(features Mods) error {
 
 	dbConn := db.GetDB()
 

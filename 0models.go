@@ -9,10 +9,10 @@ type Route = extensions.Route
 
 type Migration = extensions.Migration
 
-type Features = []extensions.FeaturePackage
+type Mods = []extensions.Mod
 
-type Arg = extensions.Arg
+type InstallArg = extensions.InstallArg
 
-type FeaturePackage = extensions.FeaturePackage
+type Mod = extensions.Mod
 
 type Error = validation.Error

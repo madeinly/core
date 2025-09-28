@@ -1,8 +1,8 @@
 package extensions
 
-var Available Features
+var Available Mods
 
-func RegisterFeatures(features Features) {
+func RegisterMods(features Mods) {
 
 	Available = features
 

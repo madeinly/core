@@ -87,7 +87,7 @@ var DB = db.GetDB
 // This starts the app
 var Start = cmd.Execute
 
-var RegisterFeatures = extensions.RegisterFeatures
+var RegisterFeatures = extensions.RegisterMods
 
 // Get the binPath folder path
 var BinPath = flows.BinPath

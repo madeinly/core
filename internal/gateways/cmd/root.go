@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/madeinly/core/internal/extensions"
 	"github.com/madeinly/core/internal/flows"
 	"github.com/spf13/cobra"
 )
@@ -25,9 +26,7 @@ asi que aqui es donde debe estar la funcion que la inicializa
 y por lo tanto aqui debe colocarse la logica que redirija al cmd correcto
 */
 
-// Initialize the app
-func Execute() {
-
+func routeCmd() {
 	//3 elementos porque como minimo se necesita
 	// [app] [feature] [action]
 	if len(os.Args) < 3 {
@@ -50,4 +49,16 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+// Initialize the app
+func Execute(mods extensions.Mods) {
+
+	extensions.RegisterMods(mods)
+
+	for _, mod := range mods {
+		fmt.Println(mod.Name)
+	}
+
+	routeCmd()
 }
