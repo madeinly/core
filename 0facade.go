@@ -91,3 +91,6 @@ var RegisterFeatures = extensions.RegisterFeatures
 
 // Get the binPath folder path
 var BinPath = flows.BinPath
+
+// Get the path (creates if not exist) ./binpath/{featurePath}
+var FeaturePath = flows.FeaturePath
